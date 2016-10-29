@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.bluetooth.BluetoothAdapter;
+import android.widget.ArrayAdapter;
 
 public class PlayScreen extends AppCompatActivity {
     int playButton_state = 0;   //0 is end state/not initialized, 1 is playing, 2 is paused
@@ -13,6 +15,7 @@ public class PlayScreen extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     ImageView   albumArt;
 
+    // Called on initialization of activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,5 +50,4 @@ public class PlayScreen extends AppCompatActivity {
 
 
     }
-
 }
