@@ -49,6 +49,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:drawableLeft="@android:drawable/arrow_down_float"
+        android:onClick="switchToDiscoverView"
         android:id="@+id/devicesButton" />
 
     <ImageView

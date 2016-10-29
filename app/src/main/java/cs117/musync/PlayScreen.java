@@ -1,8 +1,10 @@
 package cs117.musync;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 
 public class PlayScreen extends AppCompatActivity {
@@ -15,7 +17,9 @@ public class PlayScreen extends AppCompatActivity {
     }
 
 
-
-
+    public void switchToDiscoverView(View view) {
+        Intent intent = new Intent(PlayScreen.this, Discover.class);
+        startActivity(intent);
+    }
 
 }
