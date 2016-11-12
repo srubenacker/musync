@@ -51,7 +51,7 @@ public class PlayScreen extends AppCompatActivity {
     }
 
     public void switchToDiscoverView(View view) {
-        Intent intent = new Intent(PlayScreen.this, Discover.class);
+        Intent intent = new Intent(PlayScreen.this, BTConnect.class);
         startActivity(intent);
     }
 }
