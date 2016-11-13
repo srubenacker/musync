@@ -11,16 +11,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PlayScreen">
+        <activity android:name=".BTConnect">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Discover" />
-        <activity android:name=".SelectDevice" />
-        <activity android:name=".BTConnect"></activity>
+        <activity android:name=".PlayScreen"></activity>
     </application>
 
 </manifest>
