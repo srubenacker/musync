@@ -1,10 +1,24 @@
 package cs117.musync;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 // Bluetooth Library Link
@@ -16,105 +30,177 @@ import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 public class BTConnect extends AppCompatActivity {
 
     // For classic bluetooth
-    BluetoothController mBTController = BluetoothController.getInstance().build(this);
+    private BluetoothController mBTController;// = BluetoothController.getInstance().build(this);
 
-    private boolean server;
-    private boolean client;
+    private Button setDiscoverableButton, scanButton, startServerButton, openButton;
+    private TextView stateTextView;
+    private ListView devicesView;
+
+    private List<String> mList;
+    private BaseAdapter mFoundAdapter;
+    private String mMACAddress;
+
+    private static final String TAG = "MUSYNC";
+    private static final int DISCOVERY_TIME = 60;
+
+    private BluetoothListener mListener = new BluetoothListener() {
+        @Override
+        public void onActionStateChanged(int preState, int state) {
+            // Callback when bluetooth power state changed.
+        }
+
+        @Override
+        public void onActionDiscoveryStateChanged(String discoveryState) {
+            // Callback when local Bluetooth adapter discovery process state changed.
+        }
+
+        @Override
+        public void onActionScanModeChanged(int preScanMode, int scanMode) {
+            // Callback when the current scan mode changed.
+        }
+
+        @Override
+        public void onBluetoothServiceStateChanged(int state) {
+            // Callback when the connection state changed.
+        }
+
+        @Override
+        public void onActionDeviceFound(BluetoothDevice device) {
+            // Callback when found device.
+        }
+
+        @Override
+        public void onReadData(final BluetoothDevice device, final byte[] data) {
+            // Callback when remote device send data to current device.
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_btconnect);
 
-        super.onCreate(savedInstanceState);
-        UUID randomId = UUID.randomUUID();
-        mBTController.setAppUuid(randomId);
+        //UUID randomId = UUID.randomUUID();
+        //mBTController.setAppUuid(randomId);
 
-        mBTController.setBluetoothListener(new BluetoothListener() {
 
+
+        initialize();
+    }
+
+
+    private void initialize() {
+
+        mList = new ArrayList<String>();
+        mFoundAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mList);
+
+        setDiscoverableButton = (Button) findViewById(R.id.startDiscoverableButton);
+        scanButton = (Button) findViewById(R.id.scanButton);
+        openButton = (Button) findViewById(R.id.openButton);
+        startServerButton = (Button) findViewById(R.id.startServerButton);
+
+        stateTextView = (TextView) findViewById(R.id.statusTextView);
+        devicesView = (ListView) findViewById(R.id.devicesList);
+
+        devicesView.setAdapter(mFoundAdapter);
+
+        initializeBluetooth();
+
+
+        setDiscoverableButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onActionStateChanged(int preState, int state) {
-                // Callback when bluetooth power state changed.
-            }
-
-            @Override
-            public void onActionDiscoveryStateChanged(String discoveryState) {
-                // Callback when local Bluetooth adapter discovery process state changed.
-            }
-
-            @Override
-            public void onActionScanModeChanged(int preScanMode, int scanMode) {
-                // Callback when the current scan mode changed.
-            }
-
-            @Override
-            public void onBluetoothServiceStateChanged(int state) {
-                // Callback when the connection state changed.
-            }
-
-            @Override
-            public void onActionDeviceFound(BluetoothDevice device) {
-                // Callback when found device.
-            }
-
-            @Override
-            public void onReadData(final BluetoothDevice device, final byte[] data) {
-                // Callback when remote device send data to current device.
+            public void onClick(View v) {
+                mBTController.setDiscoverable(DISCOVERY_TIME);
             }
         });
 
-        server = false;
-        client = false;
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    int permission = ActivityCompat.checkSelfPermission(BTConnect.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+                    if (permission != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(BTConnect.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+                    }
+                }
 
-        if (!initializeBluetooth()) {
-            TextView statusTextView = (TextView) findViewById(R.id.statusTextView);
-            statusTextView.setText("Unable to initialize Bluetooth! :(");
-        }
-    }
+                mList.clear();
+                mFoundAdapter.notifyDataSetChanged();
 
-
-    public boolean initializeBluetooth() {
-
-        if (!mBTController.isAvailable()) {
-            System.out.println("Bluetooth is not available! :(");
-            return false;
-        }
-
-        if (!mBTController.isEnabled()) {
-            System.out.println("Bluetooth is not enabled! :(");
-            return false;
-        }
-
-        if (!mBTController.openBluetooth()) {
-            
-        }
-
-
-        return true;
-    }
-
-
-    public void startAsServer() {
-        if (client == false) {
-            server = true;
-            client = false;
-            mBTController.startAsServer();
-            System.out.println("Starting as server...");
-        }
-    }
-
-
-    public void setAsDiscoverable() {
-        if (server == false) {
-            server = false;
-            client = true;
-            if (mBTController.setDiscoverable(60)) {
-                System.out.println("Setting as discoverable for 60 seconds...");
+                if (!mBTController.startScan()) {
+                    Toast.makeText(BTConnect.this, "Failed to Start a Scan! :(", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(BTConnect.this, "Starting a scan...", Toast.LENGTH_SHORT).show();
+                }
             }
-            else {
-                client = false;
+        });
+
+        openButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mBTController.isEnabled()) {
+                    mBTController.openBluetooth();
+                }
+                else {
+                    Toast.makeText(BTConnect.this, "Bluetooth opened!", Toast.LENGTH_SHORT).show();
+                }
             }
+        });
+
+        startServerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBTController.startAsServer();
+                Toast.makeText(BTConnect.this, "Started as a server!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        devicesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String itemStr = mList.get(position);
+                mMACAddress = itemStr.substring(itemStr.length() - 17);
+                stateTextView.setText("MAC Address: " + mMACAddress);
+
+                // transition to music playing page
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 4) {
+            if (mBTController != null) {
+                mBTController.release();
+            }
+            mBTController.build(this);
+            mBTController.setBluetoothListener(mListener);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mBTController.release();
+    }
+
+
+    public void initializeBluetooth() {
+
+        mBTController = BluetoothController.getInstance().build(this);
+
+        // change this if it doesn't work
+        mBTController.setAppUuid(UUID.randomUUID());
+
+        mBTController.setBluetoothListener(mListener);
+
+        // set state text (optional)
+
     }
 
 }
