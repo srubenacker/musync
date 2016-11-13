@@ -1,6 +1,7 @@
 package cs117.musync;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,6 +26,7 @@ import java.util.UUID;
 // https://android-arsenal.com/details/1/3071#!description
 import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
+import co.lujun.lmbluetoothsdk.base.State;
 
 
 public class BTConnect extends AppCompatActivity {
@@ -47,26 +49,41 @@ public class BTConnect extends AppCompatActivity {
         @Override
         public void onActionStateChanged(int preState, int state) {
             // Callback when bluetooth power state changed.
+            stateTextView.setText("State: " + translateState(state));
         }
 
         @Override
         public void onActionDiscoveryStateChanged(String discoveryState) {
             // Callback when local Bluetooth adapter discovery process state changed.
+            if (discoveryState.equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)) {
+                Toast.makeText(BTConnect.this, "Discovery scan starting...", Toast.LENGTH_SHORT).show();
+            }
+            else if (discoveryState.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
+                Toast.makeText(BTConnect.this, "Discovery scan finsished!", Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
         public void onActionScanModeChanged(int preScanMode, int scanMode) {
             // Callback when the current scan mode changed.
+            System.out.println(TAG + " | preScanMode: " + preScanMode + " | scanMode: " + scanMode);
         }
 
         @Override
         public void onBluetoothServiceStateChanged(int state) {
             // Callback when the connection state changed.
+            System.out.println(TAG + " | State: " + translateState(state));
+
+            if (state == State.STATE_CONNECTED) {
+                // switch to other activity
+            }
         }
 
         @Override
         public void onActionDeviceFound(BluetoothDevice device) {
             // Callback when found device.
+            mList.add(device.getName() + "@" + device.getAddress());
+            mFoundAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -200,7 +217,20 @@ public class BTConnect extends AppCompatActivity {
         mBTController.setBluetoothListener(mListener);
 
         // set state text (optional)
+    }
 
+    public static String translateState(int state){
+        String result = "UNKNOWN";
+        if (state == BluetoothAdapter.STATE_TURNING_ON) {
+            result = "TURNING_ON";
+        } else if (state == BluetoothAdapter.STATE_ON) {
+            result = "ON";
+        } else if (state == BluetoothAdapter.STATE_TURNING_OFF) {
+            result = "TURNING_OFF";
+        }else if (state == BluetoothAdapter.STATE_OFF) {
+            result = "OFF";
+        }
+        return result;
     }
 
 }
