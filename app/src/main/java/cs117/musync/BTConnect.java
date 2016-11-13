@@ -76,6 +76,8 @@ public class BTConnect extends AppCompatActivity {
 
             if (state == State.STATE_CONNECTED) {
                 // switch to other activity
+                Intent intent = new Intent(BTConnect.this, PlayScreen.class);
+                startActivityForResult(intent, 4);
             }
         }
 
@@ -182,6 +184,10 @@ public class BTConnect extends AppCompatActivity {
                 stateTextView.setText("MAC Address: " + mMACAddress);
 
                 // transition to music playing page
+                Intent intent = new Intent(BTConnect.this, PlayScreen.class);
+                intent.putExtra("name", itemStr.substring(0, itemStr.length() - 18));
+                intent.putExtra("mac", mMACAddress);
+                startActivityForResult(intent, 4);
             }
         });
 
