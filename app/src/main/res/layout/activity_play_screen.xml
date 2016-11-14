@@ -71,5 +71,77 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
+    <Button
+        android:text="Send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/albumArtImage"
+        android:layout_toLeftOf="@+id/playButton"
+        android:layout_toStartOf="@+id/playButton"
+        android:layout_marginTop="15dp"
+        android:id="@+id/sendButton" />
+
+    <Button
+        android:text="Disconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/disconnectButton"
+        android:layout_alignBaseline="@+id/sendButton"
+        android:layout_alignBottom="@+id/sendButton"
+        android:layout_alignRight="@+id/albumArtImage"
+        android:layout_alignEnd="@+id/albumArtImage"
+        android:layout_marginRight="11dp"
+        android:layout_marginEnd="11dp" />
+
+    <TextView
+        android:text="State: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/libraryButton"
+        android:layout_alignLeft="@+id/sendButton"
+        android:layout_alignStart="@+id/sendButton"
+        android:layout_marginTop="11dp"
+        android:id="@+id/stateView" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Send"
+        android:ems="10"
+        android:layout_below="@+id/sendButton"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/sendContent" />
+
+    <TextView
+        android:text="Content: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sendContent"
+        android:layout_alignLeft="@+id/sendContent"
+        android:layout_alignStart="@+id/sendContent"
+        android:layout_marginTop="12dp"
+        android:id="@+id/contentView" />
+
+    <TextView
+        android:text="Device: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/contentView"
+        android:layout_alignLeft="@+id/contentView"
+        android:layout_alignStart="@+id/contentView"
+        android:layout_marginTop="18dp"
+        android:id="@+id/deviceView" />
+
+    <TextView
+        android:text="MAC: "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/deviceView"
+        android:layout_alignLeft="@+id/deviceView"
+        android:layout_alignStart="@+id/deviceView"
+        android:layout_marginTop="16dp"
+        android:id="@+id/macView" />
+
 
 </RelativeLayout>

@@ -130,7 +130,12 @@ public class BTConnect extends AppCompatActivity {
         setDiscoverableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBTController.setDiscoverable(DISCOVERY_TIME);
+                try {
+                    mBTController.setDiscoverable(DISCOVERY_TIME);
+                }
+                catch (Exception e) {
+                    Toast.makeText(BTConnect.this, e.toString(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -171,8 +176,13 @@ public class BTConnect extends AppCompatActivity {
         startServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mBTController.startAsServer();
-                Toast.makeText(BTConnect.this, "Started as a server!", Toast.LENGTH_SHORT).show();
+                try {
+                    mBTController.startAsServer();
+                    Toast.makeText(BTConnect.this, "Started as a server!", Toast.LENGTH_SHORT).show();
+                }
+                catch (Exception e) {
+                    Toast.makeText(BTConnect.this, e.toString(), Toast.LENGTH_LONG).show();
+                }
             }
         });
 
