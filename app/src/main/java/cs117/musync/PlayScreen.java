@@ -215,7 +215,7 @@ public class PlayScreen extends AppCompatActivity {
         @Override
         public void run() {
             getGroup();
-            pollHandler.postDelayed(this, 2000);
+            pollHandler.postDelayed(this, 1000);
         }
     };
 
@@ -223,7 +223,7 @@ public class PlayScreen extends AppCompatActivity {
         @Override
         public void run() {
             togglePlay();
-            stateHandler.postDelayed(this, 15);
+            stateHandler.postDelayed(this, 25);
         }
     };
 
