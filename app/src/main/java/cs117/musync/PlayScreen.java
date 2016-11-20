@@ -1,13 +1,14 @@
 package cs117.musync;
 
 
+import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.media.MediaPlayer;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -20,14 +21,15 @@ import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 import co.lujun.lmbluetoothsdk.base.State;
 
 public class PlayScreen extends AppCompatActivity {
-    int playButton_state = 0;   //0 is end state/not initialized, 1 is playing, 2 is paused
+    int playButton_state = 0;   //0 is end state/not initialized, 1 is playing, 2 is pause
     ImageButton playButton;
     MediaPlayer mediaPlayer;
     ImageView   albumArt;
+    static final int PICK_SONG_REQUEST = 5;
 
     private BluetoothController mBTController;
 
-    private Button sendButton, disconnectButton;
+    private Button sendButton, disconnectButton, libraryButton;
     private EditText sendContent;
     private TextView stateView, contentView, deviceView, macView;
 
@@ -44,6 +46,7 @@ public class PlayScreen extends AppCompatActivity {
         setContentView(R.layout.activity_play_screen);
 
         playButton = (ImageButton) findViewById(R.id.playButton);
+        libraryButton = (Button) findViewById(R.id.libraryButton);
         albumArt = (ImageView) findViewById(R.id.albumArtImage);
 
         //---------------get album art
@@ -67,6 +70,13 @@ public class PlayScreen extends AppCompatActivity {
                     playButton.setImageResource(android.R.drawable.ic_media_pause);
                     playButton_state = 1;
                 }
+            }
+        });
+
+        libraryButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(PlayScreen.this, MusicLibrary.class);
+                startActivityForResult(i, PICK_SONG_REQUEST);   //request code is 5, defined above
             }
         });
 
@@ -200,4 +210,19 @@ public class PlayScreen extends AppCompatActivity {
         }
         return result;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == PICK_SONG_REQUEST) {
+            if(resultCode == Activity.RESULT_OK){
+                String songName = data.getStringExtra("result");
+                Toast.makeText(PlayScreen.this, "Bluetooth State: " + songName, Toast.LENGTH_SHORT).show();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+                return;
+            }
+        }
+    }//onActivityResult
 }

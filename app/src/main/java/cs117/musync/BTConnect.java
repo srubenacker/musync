@@ -28,7 +28,7 @@ import co.lujun.lmbluetoothsdk.BluetoothController;
 import co.lujun.lmbluetoothsdk.base.BluetoothListener;
 import co.lujun.lmbluetoothsdk.base.State;
 
-
+//this is the first page to load
 public class BTConnect extends AppCompatActivity {
 
     // For classic bluetooth
@@ -76,7 +76,7 @@ public class BTConnect extends AppCompatActivity {
 
             if (state == State.STATE_CONNECTED) {
                 // switch to other activity
-                Intent intent = new Intent(BTConnect.this, PlayScreen.class);
+                Intent intent = new Intent(BTConnect.this, PlayScreen.class);   //expects results from PlayScreen
                 startActivityForResult(intent, 4);
             }
         }
@@ -88,10 +88,13 @@ public class BTConnect extends AppCompatActivity {
             mFoundAdapter.notifyDataSetChanged();
         }
 
+
+        //needs to implement this when receiving data
         @Override
         public void onReadData(final BluetoothDevice device, final byte[] data) {
             // Callback when remote device send data to current device.
         }
+
     };
 
     @Override
@@ -145,7 +148,9 @@ public class BTConnect extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     int permission = ActivityCompat.checkSelfPermission(BTConnect.this, Manifest.permission.ACCESS_COARSE_LOCATION);
                     if (permission != PackageManager.PERMISSION_GRANTED) {
+                        //100 is the request code
                         ActivityCompat.requestPermissions(BTConnect.this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+                        Toast.makeText(BTConnect.this, "Requesting coarse location permission", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -168,7 +173,7 @@ public class BTConnect extends AppCompatActivity {
                     mBTController.openBluetooth();
                 }
                 else {
-                    Toast.makeText(BTConnect.this, "Bluetooth opened!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BTConnect.this, "Bluetooth JUST opened!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -197,7 +202,7 @@ public class BTConnect extends AppCompatActivity {
                 Intent intent = new Intent(BTConnect.this, PlayScreen.class);
                 intent.putExtra("name", itemStr.substring(0, itemStr.length() - 18));
                 intent.putExtra("mac", mMACAddress);
-                startActivityForResult(intent, 4);
+                startActivityForResult(intent, 4);  //4 is request code
             }
         });
 
