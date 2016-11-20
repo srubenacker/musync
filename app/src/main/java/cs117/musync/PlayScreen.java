@@ -292,4 +292,11 @@ public class PlayScreen extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        String deleteGroup = serverAddress + "deleteGroup.php?groupname=" + mGroupName;
+        new DownloadTask().execute(deleteGroup);
+    }
+
 }
