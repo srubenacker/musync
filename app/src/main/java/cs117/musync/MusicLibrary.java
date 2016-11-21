@@ -2,6 +2,7 @@ package cs117.musync;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -44,9 +45,27 @@ public class MusicLibrary extends AppCompatActivity implements LoaderManager.Loa
         songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick (AdapterView<?> adapterView, View view, int i, long l) {
-                Uri result = (Uri) view.getTag();
-                //Uri uri= Uri.parse("file:///"+path);
-                Intent returnIntent = new Intent().putExtra("result", result);
+                Intent returnIntent = new Intent();
+
+                Uri result = (Uri) view.getTag(R.string.song_tag1);
+                String desp = (String) view.getTag(R.string.song_tag2);
+                Long id = (Long) view.getTag(R.string.song_tag3);
+
+                returnIntent.putExtra("result", result);
+                returnIntent.putExtra("desp", desp);
+                ContentResolver contentr = getContentResolver();
+                Cursor tempCursor = contentr.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        new String[] {MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM_ART},
+                        MediaStore.Audio.Albums._ID+ "=?",
+                        new String[] {String.valueOf(id)},
+                        null);
+
+
+                if (tempCursor.moveToFirst()) {
+                    String p = tempCursor.getString(tempCursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM_ART));
+                    returnIntent.putExtra("art", p);
+                }
+
                 setResult(Activity.RESULT_OK,returnIntent);
                 finish();
             }

@@ -3,6 +3,8 @@ package cs117.musync;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -38,6 +40,7 @@ public class PlayScreen extends AppCompatActivity {
     static final int PICK_SONG_REQUEST = 5;
     TextView groupNameView;
     Button joinButton;
+    TextView songDesp;
 
     private static final String TAG = "Musync";
 
@@ -63,10 +66,13 @@ public class PlayScreen extends AppCompatActivity {
         albumArt = (ImageView) findViewById(R.id.albumArtImage);
         groupNameView = (TextView) findViewById(R.id.groupNameView);
         joinButton = (Button) findViewById(R.id.joinButton);
-
+        songDesp = (TextView) findViewById(R.id.album_string);
         mediaPlayer = MediaPlayer.create(PlayScreen.this, R.raw.song2);
 
         albumArt.setImageResource(R.drawable.art);
+
+        //disable play button when not in a group
+        playButton.setEnabled(false);
 
         //---------------get album art
        // TO DO
@@ -106,7 +112,9 @@ public class PlayScreen extends AppCompatActivity {
         joinButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 joinGroup();
+                playButton.setEnabled(true);
             }
+
         });
 
         mGroupName = "";
@@ -285,6 +293,8 @@ public class PlayScreen extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
 
                 Uri songPath = (Uri) data.getExtras().get("result");
+                String desp = (String) data.getExtras().get("desp");
+                String artPath = (String) data.getExtras().get("art");
                 mediaPlayer.reset();
 
                 try {
@@ -294,7 +304,20 @@ public class PlayScreen extends AppCompatActivity {
                     Log.e("error loading song", "error");
                 }
 
-                Toast.makeText(PlayScreen.this, songPath.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(PlayScreen.this, "Playing " + desp, Toast.LENGTH_LONG).show();
+                //Toast.makeText(PlayScreen.this, "Playing " + artPath, Toast.LENGTH_LONG).show();
+
+
+                if(artPath != null){
+
+                    Bitmap bm= BitmapFactory.decodeFile(artPath);
+                    albumArt.setImageBitmap(bm);
+                    songDesp.setText(null);
+                }
+                else {
+                    albumArt.setImageDrawable(null);
+                    songDesp.setText(desp);
+                }
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result

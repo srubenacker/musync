@@ -36,15 +36,18 @@ public class SongAdapter extends CursorAdapter{
                 (android.provider.MediaStore.Audio.Media.TITLE);
         int artistColumn = cursor.getColumnIndex
                 (android.provider.MediaStore.Audio.Media.ARTIST);
-        int songFile = cursor.getColumnIndex(android.provider.MediaStore.Audio.Media.DATA);
         int fileID = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
         String songTitle = cursor.getString(titleColumn);
         String songArtist = cursor.getString(artistColumn);
+
         long id = cursor.getLong(fileID);
+        String desp = songTitle + " by " + songArtist;
         Uri contentUri = ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
-        String path = cursor.getString(songFile);
-        view.setTag(contentUri);
+        view.setTag(R.string.song_tag1,contentUri);
+        view.setTag(R.string.song_tag2,desp);
+        view.setTag(R.string.song_tag3, id);
+
         songTitleField.setText(songTitle);
         artistNameField.setText(songArtist);
     }
