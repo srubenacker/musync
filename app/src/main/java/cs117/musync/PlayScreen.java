@@ -4,16 +4,14 @@ package cs117.musync;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -103,6 +101,8 @@ public class PlayScreen extends AppCompatActivity {
             }
         });
 
+
+
         joinButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 joinGroup();
@@ -127,7 +127,8 @@ public class PlayScreen extends AppCompatActivity {
                 return downloadContent(params[0]);
             } catch (IOException e) {
                 System.out.println(e.toString());
-                return "Make sure you are connected to WiFi!!!  Then try again.";
+                mediaPlayer.reset();
+                return "Error reading music file";
             }
         }
 
@@ -282,8 +283,18 @@ public class PlayScreen extends AppCompatActivity {
 
         if (requestCode == PICK_SONG_REQUEST) {
             if(resultCode == Activity.RESULT_OK){
-                String songName = data.getStringExtra("result");
-                Toast.makeText(PlayScreen.this, "Bluetooth State: " + songName, Toast.LENGTH_SHORT).show();
+
+                Uri songPath = (Uri) data.getExtras().get("result");
+                mediaPlayer.reset();
+
+                try {
+                    mediaPlayer.setDataSource(PlayScreen.this, songPath);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    Log.e("error loading song", "error");
+                }
+
+                Toast.makeText(PlayScreen.this, songPath.toString(), Toast.LENGTH_LONG).show();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
