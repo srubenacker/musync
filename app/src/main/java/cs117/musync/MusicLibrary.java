@@ -2,13 +2,13 @@ package cs117.musync;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.CursorLoader;
+import android.support.v4.content.CursorLoader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.UserDictionary;
+
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -88,7 +88,7 @@ public class MusicLibrary extends AppCompatActivity implements LoaderManager.Loa
                         };
                 return new CursorLoader(
                         MusicLibrary.this,   // Parent activity context
-                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,,        // Table to query
+                        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,        // Table to query
                         mProjection,     // Projection
                         null,            // No selection clause
                         null,            // No selection arguments
@@ -98,14 +98,13 @@ public class MusicLibrary extends AppCompatActivity implements LoaderManager.Loa
                 // An invalid id was passed in
                 return null;
         }
-        return null;
     }
 
     /**
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * activity's state is saved.  See {@linkFragmentManager#beginTransaction()
      * FragmentManager.openTransaction()} for further discussion on this.
      * <p/>
      * <p>This function is guaranteed to be called prior to the release of
